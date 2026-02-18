@@ -1,0 +1,15 @@
+fn main() -> int {
+    Test.init("cache")
+    // Cache is a HashMap with timestamps
+    var cache = HashMap.new()
+    cache.insert("user:1", "Alice")
+    cache.insert("user:2", "Bob")
+    Test.assert_eq_str(cache.get("user:1"), "Alice", "cache hit")
+    Test.assert_eq_str(cache.get("user:2"), "Bob", "cache hit 2")
+    Test.assert_eq_str(cache.get("user:3"), "", "cache miss")
+    // Overwrite
+    cache.insert("user:1", "Updated")
+    Test.assert_eq_str(cache.get("user:1"), "Updated", "cache update")
+    Test.summary()
+    return 0
+}

@@ -1,0 +1,4 @@
+[project]
+name = "cache"
+version = "0.1.0"
+description = "In-memory key-value cache with TTL"
