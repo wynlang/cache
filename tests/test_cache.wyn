@@ -1,15 +1,33 @@
-fn main() -> int {
-    Test.init("cache")
+test "cache hit" {
     // Cache is a HashMap with timestamps
     var cache = HashMap.new()
     cache.insert("user:1", "Alice")
     cache.insert("user:2", "Bob")
-    Test.assert_eq_str(cache.get("user:1"), "Alice", "cache hit")
-    Test.assert_eq_str(cache.get("user:2"), "Bob", "cache hit 2")
-    Test.assert_eq_str(cache.get("user:3"), "", "cache miss")
+    assert_eq(cache.get("user:1"), "Alice")
+}
+
+test "cache hit 2" {
+    // Cache is a HashMap with timestamps
+    var cache = HashMap.new()
+    cache.insert("user:1", "Alice")
+    cache.insert("user:2", "Bob")
+    assert_eq(cache.get("user:2"), "Bob")
+}
+
+test "cache miss" {
+    // Cache is a HashMap with timestamps
+    var cache = HashMap.new()
+    cache.insert("user:1", "Alice")
+    cache.insert("user:2", "Bob")
+    assert_eq(cache.get("user:3"), "")
+}
+
+test "cache update" {
+    // Cache is a HashMap with timestamps
+    var cache = HashMap.new()
+    cache.insert("user:1", "Alice")
+    cache.insert("user:2", "Bob")
     // Overwrite
     cache.insert("user:1", "Updated")
-    Test.assert_eq_str(cache.get("user:1"), "Updated", "cache update")
-    Test.summary()
-    return 0
+    assert_eq(cache.get("user:1"), "Updated")
 }
