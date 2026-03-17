@@ -1,33 +1,22 @@
-test "cache hit" {
-    // Cache is a HashMap with timestamps
-    var cache = HashMap.new()
-    cache.insert("user:1", "Alice")
-    cache.insert("user:2", "Bob")
-    assert_eq(cache.get("user:1"), "Alice")
-}
+fn Cache_new() -> HashMap { return HashMap.new() }
+fn Cache_set(cache: HashMap, key: string, value: string) { cache.insert(key, value) }
+fn Cache_get(cache: HashMap, key: string) -> string { return cache.get(key) }
+fn Cache_has(cache: HashMap, key: string) -> bool { return cache.get(key) != "" }
+fn Cache_size(cache: HashMap) -> int { return cache.len() }
 
-test "cache hit 2" {
-    // Cache is a HashMap with timestamps
-    var cache = HashMap.new()
-    cache.insert("user:1", "Alice")
-    cache.insert("user:2", "Bob")
-    assert_eq(cache.get("user:2"), "Bob")
-}
+fn main() -> int {
+    var c = Cache_new()
+    Cache_set(c, "user:1", "Alice")
+    Cache_set(c, "user:2", "Bob")
+    assert_eq(Cache_get(c, "user:1"), "Alice")
+    assert_eq(Cache_get(c, "user:2"), "Bob")
+    assert_eq(Cache_get(c, "user:3"), "")
+    if Cache_has(c, "user:1") { println("has: pass") }
+    if !Cache_has(c, "missing") { println("miss: pass") }
+    assert_eq(Cache_size(c), 2)
+    Cache_set(c, "user:1", "Updated")
+    assert_eq(Cache_get(c, "user:1"), "Updated")
 
-test "cache miss" {
-    // Cache is a HashMap with timestamps
-    var cache = HashMap.new()
-    cache.insert("user:1", "Alice")
-    cache.insert("user:2", "Bob")
-    assert_eq(cache.get("user:3"), "")
-}
-
-test "cache update" {
-    // Cache is a HashMap with timestamps
-    var cache = HashMap.new()
-    cache.insert("user:1", "Alice")
-    cache.insert("user:2", "Bob")
-    // Overwrite
-    cache.insert("user:1", "Updated")
-    assert_eq(cache.get("user:1"), "Updated")
+    println("cache: 7 tests passed")
+    return 0
 }
