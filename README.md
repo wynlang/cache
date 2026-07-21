@@ -1,4 +1,4 @@
-# cache — Official Wyn Package
+# cache - Official Wyn Package
 
 In-memory key-value cache. Pure Wyn (wraps HashMap).
 
