@@ -12,7 +12,7 @@ fn main() -> int {
     assert_eq(Cache_get(c, "user:2"), "Bob")
     assert_eq(Cache_get(c, "user:3"), "")
     if Cache_has(c, "user:1") { println("has: pass") }
-    if !Cache_has(c, "missing") { println("miss: pass") }
+    if not Cache_has(c, "missing") { println("miss: pass") }
     assert_eq(Cache_size(c), 2)
     Cache_set(c, "user:1", "Updated")
     assert_eq(Cache_get(c, "user:1"), "Updated")
