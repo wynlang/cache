@@ -1,22 +1,37 @@
-fn Cache_new() -> HashMap { return HashMap.new() }
-fn Cache_set(cache: HashMap, key: string, value: string) { cache.insert(key, value) }
-fn Cache_get(cache: HashMap, key: string) -> string { return cache.get(key) }
-fn Cache_has(cache: HashMap, key: string) -> bool { return cache.get(key) != "" }
-fn Cache_size(cache: HashMap) -> int { return cache.len() }
+// Exercises the shipped lib in src/cache.wyn via the tests/cache.wyn symlink.
+import cache
 
-fn main() -> int {
-    var c = Cache_new()
-    Cache_set(c, "user:1", "Alice")
-    Cache_set(c, "user:2", "Bob")
-    assert_eq(Cache_get(c, "user:1"), "Alice")
-    assert_eq(Cache_get(c, "user:2"), "Bob")
-    assert_eq(Cache_get(c, "user:3"), "")
-    if Cache_has(c, "user:1") { println("has: pass") }
-    if not Cache_has(c, "missing") { println("miss: pass") }
-    assert_eq(Cache_size(c), 2)
-    Cache_set(c, "user:1", "Updated")
-    assert_eq(Cache_get(c, "user:1"), "Updated")
-
-    println("cache: 7 tests passed")
-    return 0
+test "empty get" { assert_eq(cache.cache_get(cache.cache_new(), "x"), "") }
+test "set and get" {
+    var c = cache.cache_set(cache.cache_new(), "host", "localhost")
+    assert_eq(cache.cache_get(c, "host"), "localhost")
+}
+test "overwrite" {
+    var c = cache.cache_set(cache.cache_new(), "k", "v1")
+    c = cache.cache_set(c, "k", "v2")
+    assert_eq(cache.cache_get(c, "k"), "v2")
+}
+test "has present" {
+    var c = cache.cache_set(cache.cache_new(), "k", "v")
+    assert(cache.cache_has(c, "k"))
+}
+test "has absent" { assert(not cache.cache_has(cache.cache_new(), "k")) }
+test "size" {
+    var c = cache.cache_set(cache.cache_new(), "a", "1")
+    c = cache.cache_set(c, "b", "2")
+    assert_eq(cache.cache_size(c), 2)
+}
+test "overwrite keeps size" {
+    var c = cache.cache_set(cache.cache_new(), "a", "1")
+    c = cache.cache_set(c, "a", "2")
+    assert_eq(cache.cache_size(c), 1)
+}
+test "delete" {
+    var c = cache.cache_set(cache.cache_new(), "x", "y")
+    c = cache.cache_delete(c, "x")
+    assert(not cache.cache_has(c, "x"))
+}
+test "value with special chars" {
+    var c = cache.cache_set(cache.cache_new(), "url", "http://x.com:8080/a b")
+    assert_eq(cache.cache_get(c, "url"), "http://x.com:8080/a b")
 }

@@ -1,0 +1,12 @@
+import cache
+
+fn main() {
+    var c = cache.cache_new()
+    c = cache.cache_set(c, "host", "localhost")
+    c = cache.cache_set(c, "port", "8080")
+    println("has host: ${cache.cache_has(c, "host")}")
+    println("get host: ${cache.cache_get(c, "host")}")
+    println("size: ${cache.cache_size(c)}")
+    c = cache.cache_delete(c, "host")
+    println("after delete, has host: ${cache.cache_has(c, "host")}")
+}

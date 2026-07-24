@@ -1,0 +1,74 @@
+// cache - in-memory key/value cache. Pure Wyn.
+//
+// NOTE: a Wyn HashMap cannot cross a module import boundary (and a
+// module-global HashMap does not persist across imported calls), so the
+// public, importable surface is a string-serialized store: the cache is a
+// single string value that callers hold and pass back in. Each mutating
+// operation takes the current store string and returns the updated one.
+//
+// Store format: records separated by "\x1e", key/value within a record
+// separated by "\x1f", so keys and values may safely contain spaces, '='
+// and ':'.
+
+fn field_sep() -> string { return "\x1f" }
+fn record_sep() -> string { return "\x1e" }
+
+// A fresh empty cache.
+pub fn cache_new() -> string { return "" }
+
+// Value for `key`, or "" if absent.
+pub fn cache_get(store: string, key: string) -> string {
+    var recs = store.split(record_sep())
+    for rec in recs {
+        if rec.len() == 0 { continue }
+        var sep = rec.index_of(field_sep())
+        if sep < 0 { continue }
+        if rec.substring(0, sep) == key {
+            return rec.substring(sep + 1, rec.len())
+        }
+    }
+    return ""
+}
+
+// True if `key` is present.
+pub fn cache_has(store: string, key: string) -> bool {
+    var recs = store.split(record_sep())
+    for rec in recs {
+        if rec.len() == 0 { continue }
+        var sep = rec.index_of(field_sep())
+        if sep < 0 { continue }
+        if rec.substring(0, sep) == key { return true }
+    }
+    return false
+}
+
+// Return a new store with `key` removed (no-op if absent).
+pub fn cache_delete(store: string, key: string) -> string {
+    var recs = store.split(record_sep())
+    var out = ""
+    for rec in recs {
+        if rec.len() == 0 { continue }
+        var sep = rec.index_of(field_sep())
+        if sep < 0 { continue }
+        if rec.substring(0, sep) == key { continue }
+        out = out + record_sep() + rec
+    }
+    return out
+}
+
+// Return a new store with key=value set (replacing any existing key).
+pub fn cache_set(store: string, key: string, value: string) -> string {
+    var cleared = cache_delete(store, key)
+    return cleared + record_sep() + key + field_sep() + value
+}
+
+// Number of entries.
+pub fn cache_size(store: string) -> int {
+    var recs = store.split(record_sep())
+    var n = 0
+    for rec in recs {
+        if rec.len() == 0 { continue }
+        if rec.index_of(field_sep()) >= 0 { n = n + 1 }
+    }
+    return n
+}
